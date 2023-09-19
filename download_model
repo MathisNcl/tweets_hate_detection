@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+import os
+import pickle
+
+from datasets import load_dataset
+from transformers import AutoTokenizer
+
+
+def import_dataset():
+    if os.path.exists("data/") is False:
+        os.mkdir("data")
+        dataset = load_dataset("tweets_hate_speech_detection")
+
+        if os.path.exists("data/raw/") is False:
+            os.mkdir("data/raw/")
+
+        with open("data/raw/tweets_hate_speech_detection.pkl", "wb") as file:
+            pickle.dump(dataset, file)
+        print("raw dataset exported")
+        print(f"Number of tweets for train: {len(dataset['train'])}")
+        print(f"Number of tweets for test: {len(dataset['test'])}")
+
+        tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+        dataset = dataset.map(lambda examples: tokenizer(examples["tweet"]), batched=True)
+        with open("data/train.pkl", "wb") as file:
+            pickle.dump(dataset["train"], file)
+            print("data/train.pkl exported")
+
+        with open("data/test.pkl", "wb") as file:
+            pickle.dump(dataset["test"], file)
+            print("data/test.pkl exported")
+
+    else:
+        print("data/ already exists. No need to download")
+
+
+if __name__ == "__main__":
+    import_dataset()

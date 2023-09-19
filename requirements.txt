@@ -1,0 +1,11 @@
+black
+datasets
+ipykernel
+transformers
+jupyter
+pre-commit
+tqdm
+hydra-core
+mlflow
+tensorboard
+torch
